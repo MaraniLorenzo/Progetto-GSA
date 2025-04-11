@@ -6,14 +6,11 @@ Un'app mobile pensata per aiutare gli utenti a monitorare e gestire tutte le spe
 
 ## 🧩 Wireframe
 
-Il progetto è attualmente in fase di progettazione e il wireframe è stato realizzato con **Figma**.  
-Qui sotto alcune schermate principali dell'app:
+📄 Il wireframe completo dell'app è disponibile in formato PDF ed è stato realizzato con **Figma**.
 
-| Home | Scadenze | Aggiunta Spese | Storico | Dettaglio |
-|------|----------|----------------|---------|-----------|
-| ![Home](./screenshots/home.png) | ![Scadenze](./screenshots/scadenze.png) | ![Aggiungi](./screenshots/aggiungi.png) | ![Storico](./screenshots/storico.png) | ![Dettaglio](./screenshots/dettaglio.png) |
+➡️ **[Visualizza il wireframe](./wireframe.pdf)**
 
-> Le immagini sono solo a scopo illustrativo, tratte dal file Figma esportato.
+> Il PDF include tutte le schermate principali dell'app e illustra il flusso di navigazione previsto.
 
 ---
 
@@ -50,14 +47,6 @@ Questo progetto è parte del mio portfolio come studente di Ingegneria Informati
 - Sperimentare UI/UX con Figma
 - Creare un'app utile, semplice e curata
 
-
-## 🧩 Wireframe
-
-📄 Il wireframe completo dell'app è disponibile in formato PDF ed è stato realizzato con **Figma**.
-
-➡️ **[Visualizza il wireframe](./wireframe.pdf)**
-
-> Il PDF include tutte le schermate principali dell'app e illustra il flusso di navigazione previsto.
 
 ---
 
