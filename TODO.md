@@ -7,9 +7,9 @@ Lista delle funzionalità da sviluppare, basata sul wireframe.
 - [x] Creazione repository GitHub
 - [x] Aggiunta README.md e LICENSE
 - [x] Esportazione wireframe Figma
-- [ ] Setup progetto React Native con Expo
-- [ ] Impostazione navigazione tra schermate
-- [ ] Creazione struttura cartelle base
+- [x] Setup progetto React Native con Expo
+- [x] Impostazione navigazione tra schermate
+- [x] Creazione struttura cartelle base
 
 ---
 
