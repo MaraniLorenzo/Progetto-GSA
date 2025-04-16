@@ -4,6 +4,8 @@ import LoginScreen from './screens/LoginScreen';
 import RegisterScreen from './screens/RegisterScreen';
 import HomeScreen from './screens/HomeScreen';
 
-export default function App() {
+function App() {
   return <AppNavigator />;
 }
+
+export default App;

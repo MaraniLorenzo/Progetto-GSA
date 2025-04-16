@@ -16,7 +16,6 @@ export default function HomeScreen() {
       <Text style={styles.title}>Benvenuto nella Home!</Text>
       <Text style={styles.subtitle}>Questa è la schermata principale della tua app.</Text>
 
-      {/* Rimuovo il bottone "Aggiungi Auto" */}
       <TouchableOpacity style={[styles.button, styles.logoutButton]} onPress={handleLogout}>
         <Text style={styles.buttonText}>Logout</Text>
       </TouchableOpacity>

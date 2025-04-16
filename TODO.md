@@ -8,8 +8,8 @@ Lista delle funzionalità da sviluppare, basata sul wireframe.
 - [x] Aggiunta README.md e LICENSE
 - [x] Esportazione wireframe Figma
 - [x] Setup progetto React Native con Expo
-- [] Impostazione navigazione tra schermate
-- [] Creazione struttura cartelle base
+- [x] Impostazione navigazione tra schermate
+- [x] Creazione struttura cartelle base
 
 ---
 
@@ -18,10 +18,10 @@ Lista delle funzionalità da sviluppare, basata sul wireframe.
 ### Home
 - [ ] Visualizzazione spese recenti
 - [ ] Visualizzazione spesa totale mese
-- [ ] Pulsante "Aggiungi Spesa"
+- [x] Pulsante "Aggiungi Spesa"
 
 ### Aggiungi Spesa
-- [ ] Form inserimento dati (tipo, importo, data, note)
+- [x] Form inserimento dati (tipo, importo, data, note)
 - [ ] Validazione campi obbligatori
 - [ ] Salvataggio in memoria (AsyncStorage)
 
