@@ -2,87 +2,97 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { Ionicons } from '@expo/vector-icons';
+import { useThemeContext } from '../context/ThemeContext';
 import { RootStackParamList } from '../types/navigation';
 
 export default function LoginScreen() {
-  // Tipizzazione corretta per useNavigation
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  
-  // Stati per email, nome utente e password
+
   const [usernameOrEmail, setUsernameOrEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  // Funzione di login
+  // Recupera il tema e la funzione per cambiare tema
+  const { theme, toggleTheme } = useThemeContext();
+
   const handleLogin = () => {
-    // Verifica che i campi siano compilati
     if (!usernameOrEmail || !password) {
       Alert.alert('Attenzione', 'Compila tutti i campi!');
       return;
     }
 
-    // Qui dovresti aggiungere la logica per verificare se il nome utente o email sono validi
-    // Per esempio, puoi fare una chiamata API per validare il login
     if (usernameOrEmail === 'test@example.com' || usernameOrEmail === 'Lollo') {
-      // Logica di successo
       Alert.alert('Login effettuato', `Benvenuto, ${usernameOrEmail}!`);
-      
-      // Navigazione alla Home
       navigation.navigate('Home');
     } else {
-      // Caso in cui le credenziali non siano corrette
       Alert.alert('Errore', 'Credenziali non valide');
     }
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Accedi</Text>
+      <Text style={[styles.title, { color: theme.colors.text }]}>Accedi</Text>
 
       <TextInput
-        style={styles.input}
+        style={[styles.input, { borderColor: theme.colors.border, color: theme.colors.text }]}  
         placeholder="Nome Utente o Email"
+        placeholderTextColor={theme.colors.placeholder}  
         value={usernameOrEmail}
         onChangeText={setUsernameOrEmail}
       />
       <TextInput
-        style={styles.input}
+        style={[styles.input, { borderColor: theme.colors.border, color: theme.colors.text }]} 
         placeholder="Password"
+        placeholderTextColor={theme.colors.placeholder} 
         secureTextEntry
         value={password}
         onChangeText={setPassword}
       />
 
-      <TouchableOpacity style={styles.button} onPress={handleLogin}>
+      <TouchableOpacity style={[styles.button, { backgroundColor: theme.colors.primary }]} onPress={handleLogin}>
         <Text style={styles.buttonText}>Accedi</Text>
       </TouchableOpacity>
 
-      <Text style={styles.registerText}>
+      <Text style={[styles.registerText, { color: theme.colors.text }]}>
         Non hai un account?{' '}
-        <Text style={styles.link} onPress={() => navigation.navigate('Register')}>
+        <Text style={[styles.link, { color: theme.colors.primary }]} onPress={() => navigation.navigate('Register')}>
           Registrati
         </Text>
       </Text>
+
+      {/* Icona per cambio tema in alto a destra */}
+      <TouchableOpacity style={styles.themeButton} onPress={toggleTheme}>
+        <Ionicons
+          name={theme.colors.background === '#0f0f0f' ? 'sunny-outline' : 'moon-outline'}
+          size={30} // Aumentato la dimensione per visibilità
+          color={theme.colors.text}
+        />
+      </TouchableOpacity>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'center', padding: 24, backgroundColor: '#fff' },
+  container: { flex: 1, justifyContent: 'center', padding: 24 },
   title: { fontSize: 28, fontWeight: 'bold', marginBottom: 24 },
   input: {
     borderWidth: 1,
-    borderColor: '#ccc',
     padding: 12,
     marginBottom: 12,
     borderRadius: 8,
   },
   button: {
-    backgroundColor: '#007AFF',
     padding: 14,
     borderRadius: 8,
     marginBottom: 12,
   },
   buttonText: { color: '#fff', textAlign: 'center', fontWeight: 'bold' },
   registerText: { textAlign: 'center', marginTop: 12 },
-  link: { color: '#007AFF', fontWeight: '600' },
+  link: { fontWeight: '600' },
+  themeButton: {
+    position: 'absolute',
+    top: 40, // Spostato in alto
+    right: 20, // Spostato a destra
+    padding: 10,
+  },
 });

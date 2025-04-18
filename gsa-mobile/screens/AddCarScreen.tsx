@@ -1,63 +1,86 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert, TouchableOpacity } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  Alert,
+  TouchableOpacity
+} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { DrawerNavigationProp } from '@react-navigation/drawer';
 import { RootStackParamList } from '../types/navigation';
+import { useThemeContext } from '../context/ThemeContext';
 
 type AddCarScreenNavigationProp = DrawerNavigationProp<RootStackParamList, 'AddCar'>;
 
 export default function AddCarScreen() {
   const navigation = useNavigation<AddCarScreenNavigationProp>();
+  const { theme } = useThemeContext();
 
-  // Stati per i campi di input
   const [brand, setBrand] = useState('');
   const [model, setModel] = useState('');
   const [plate, setPlate] = useState('');
 
-  // Funzione per gestire il salvataggio dell'auto
   const handleSaveCar = () => {
     if (!brand || !model) {
       Alert.alert('Errore', 'Marca e modello sono obbligatori!');
       return;
     }
 
-    // Qui aggiungi la logica per salvare i dati (ad esempio, inviarli a un'API o a un database)
-    Alert.alert('Auto aggiunta', `Marca: ${brand}\nModello: ${model}\nTarga: ${plate || 'Non fornita'}`);
-
-    // Puoi aggiungere la navigazione alla home, o dove preferisci
     navigation.navigate('Home');
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Aggiungi Auto</Text>
+    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+      <Text style={[styles.title, { color: theme.colors.text }]}>Aggiungi Auto</Text>
 
-      {/* Campo per la marca */}
       <TextInput
-        style={styles.input}
+        style={[
+          styles.input,
+          {
+            borderColor: theme.colors.border,
+            color: theme.colors.text,
+          }
+        ]}
         placeholder="Marca"
+        placeholderTextColor={theme.colors.placeholder}
         value={brand}
         onChangeText={setBrand}
       />
 
-      {/* Campo per il modello */}
       <TextInput
-        style={styles.input}
+        style={[
+          styles.input,
+          {
+            borderColor: theme.colors.border,
+            color: theme.colors.text,
+          }
+        ]}
         placeholder="Modello"
+        placeholderTextColor={theme.colors.placeholder}
         value={model}
         onChangeText={setModel}
       />
 
-      {/* Campo opzionale per la targa */}
       <TextInput
-        style={styles.input}
+        style={[
+          styles.input,
+          {
+            borderColor: theme.colors.border,
+            color: theme.colors.text,
+          }
+        ]}
         placeholder="Targa (opzionale)"
+        placeholderTextColor={theme.colors.placeholder}
         value={plate}
         onChangeText={setPlate}
       />
 
-      {/* Pulsante personalizzato */}
-      <TouchableOpacity style={styles.button} onPress={handleSaveCar}>
+      <TouchableOpacity
+        style={[styles.button, { backgroundColor: theme.colors.primary }]}
+        onPress={handleSaveCar}
+      >
         <Text style={styles.buttonText}>Salva Auto</Text>
       </TouchableOpacity>
     </View>
@@ -69,7 +92,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#f5f5f5',
     padding: 24,
   },
   title: {
@@ -80,13 +102,11 @@ const styles = StyleSheet.create({
   input: {
     width: '100%',
     borderWidth: 1,
-    borderColor: '#ccc',
     padding: 12,
     marginBottom: 12,
     borderRadius: 8,
   },
   button: {
-    backgroundColor: '#007BFF', // Colore di sfondo del pulsante
     padding: 12,
     borderRadius: 8,
     width: '100%',
@@ -94,7 +114,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   buttonText: {
-    color: '#fff', // Colore del testo del pulsante
+    color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
   },

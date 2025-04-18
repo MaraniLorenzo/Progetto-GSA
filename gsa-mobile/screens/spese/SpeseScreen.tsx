@@ -3,12 +3,14 @@ import { FlatList, Text, TouchableOpacity, View, StyleSheet, TextInput } from 'r
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList, Spesa } from '../../types/navigation';
+import { useThemeContext } from '../../context/ThemeContext';
 
 type NavigationProp = StackNavigationProp<RootStackParamList, 'DettaglioSpesa'>;
 
 const SpeseScreen = () => {
   const navigation = useNavigation<NavigationProp>();
   const [query, setQuery] = useState('');
+  const { theme } = useThemeContext();  // Usa il tema dal contesto
 
   // Dati di esempio delle spese
   const spese: Spesa[] = [
@@ -33,6 +35,7 @@ const SpeseScreen = () => {
       id: '3',
       dataSpesa: '2025-04-17',
       categoria: 'Manutenzione',
+      tipoManutenzione: 'Cambio olio',
       kmAttuali: 25000,
       costo: 50,
     },
@@ -59,11 +62,11 @@ const SpeseScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <TextInput
-        style={styles.searchInput}
+        style={[styles.searchInput, { borderColor: theme.colors.primary, backgroundColor: theme.colors.card }]}
         placeholder="Cerca spesa..."
-        placeholderTextColor="#aaa"
+        placeholderTextColor={theme.colors.placeholder}
         value={query}
         onChangeText={setQuery}
       />
@@ -72,15 +75,17 @@ const SpeseScreen = () => {
         data={filteredSpese}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <TouchableOpacity style={styles.item} onPress={() => handlePress(item)}>
+          <TouchableOpacity style={[styles.item, { backgroundColor: theme.colors.card }]} onPress={() => handlePress(item)}>
             <View style={styles.itemContent}>
-              <Text style={styles.itemTitle}>{item.categoria}</Text>
-              <Text style={styles.amount}>€{item.costo}</Text>
-              <View style={styles.divider} />
-              <Text style={styles.date}>{item.dataSpesa}</Text>
+              <Text style={[styles.itemTitle, { color: theme.colors.text }]}>{item.categoria}</Text>
+              <Text style={[styles.amount, { color: theme.colors.text }]}>€{item.costo}</Text>
+              <View style={[styles.divider, { backgroundColor: theme.colors.border }]} />
+              <Text style={[styles.date, { color: theme.colors.text }]}>
+                {item.dataSpesa}
+              </Text>
 
               {item.categoria === 'Rifornimento' && (
-                <Text style={styles.consumo}>
+                <Text style={[styles.consumo, { color: theme.colors.primary }]}>
                   Consumo medio: {calculateConsumoMedio(item)} L/100km
                 </Text>
               )}
@@ -96,16 +101,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: '#f9f9f9',
   },
   searchInput: {
     height: 50,
-    borderColor: '#007bff',
     borderWidth: 1.5,
     borderRadius: 25,
     paddingHorizontal: 20,
     fontSize: 16,
-    backgroundColor: '#fff',
     marginBottom: 20,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -113,7 +115,6 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
   },
   item: {
-    backgroundColor: '#fff',
     borderRadius: 12,
     padding: 18,
     marginBottom: 16,
@@ -131,26 +132,21 @@ const styles = StyleSheet.create({
   itemTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#333',
   },
   amount: {
     fontSize: 16,
-    color: '#000',
     marginTop: 4,
   },
   date: {
     fontSize: 14,
-    color: '#777',
     marginVertical: 4,
   },
   consumo: {
     fontSize: 14,
     fontStyle: 'italic',
-    color: '#007bff',
   },
   divider: {
     height: 1,
-    backgroundColor: '#ddd',
     marginVertical: 8,
     width: '100%',
   },

@@ -14,8 +14,10 @@ import * as ImagePicker from 'expo-image-picker';
 import { FontAwesome5, MaterialIcons, Entypo } from '@expo/vector-icons';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { Picker } from '@react-native-picker/picker';
-
+import { useThemeContext } from '../context/ThemeContext'; 
 export default function AggiungiScreen() {
+  const { theme, isDark } = useThemeContext();
+
   const [tipo, setTipo] = useState<string>('rifornimento');
   const [km, setKm] = useState('');
   const [costoLitro, setCostoLitro] = useState('');
@@ -25,7 +27,9 @@ export default function AggiungiScreen() {
   const [tipoManutenzione, setTipoManutenzione] = useState('');
   const [frequenza, setFrequenza] = useState('');
   const [scadenza, setScadenza] = useState<Date | null>(null);
+  const [dataEvento, setDataEvento] = useState<Date | null>(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const [showDataEventoPicker, setShowDataEventoPicker] = useState(false);
   const [image, setImage] = useState<string | null>(null);
 
   const scattaFoto = async () => {
@@ -53,11 +57,12 @@ export default function AggiungiScreen() {
 
     const data = {
       tipo,
+      dataEvento: dataEvento ? dataEvento.toLocaleDateString() : null,
       km,
       costoLitro,
       costo,
       tipoSpesa,
-      tipoManutenzione, // Incluso per la sezione "Manutenzione"
+      tipoManutenzione,
       scadenza: scadenza ? scadenza.toLocaleDateString() : null,
       frequenza,
       note,
@@ -70,155 +75,116 @@ export default function AggiungiScreen() {
 
   const renderButton = (label: string, value: string, icon: JSX.Element) => (
     <TouchableOpacity
-      style={[styles.optionButton, tipo === value && styles.selectedButton]}
+      style={[
+        styles.optionButton,
+        { backgroundColor: tipo === value ? theme.colors.primary : theme.colors.card },
+      ]}
       onPress={() => setTipo(value)}
     >
       <View style={styles.iconRow}>
         {icon}
-        <Text style={[styles.optionText, tipo === value && styles.selectedText]}>{label}</Text>
+        <Text style={[styles.optionText, { color: tipo === value ? '#fff' : theme.colors.text }]}>
+          {label}
+        </Text>
       </View>
     </TouchableOpacity>
   );
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.scrollContent}>
-      <Text style={styles.title}>Aggiungi una voce</Text>
+    <ScrollView style={[styles.container, { backgroundColor: theme.colors.background }]} contentContainerStyle={styles.scrollContent}>
+      <View style={{ marginTop: 20 }} />
 
-      {/* Pulsanti per la selezione, disposti verticalmente */}
       <View style={styles.buttonGroup}>
         {renderButton(
           'Rifornimento',
           'rifornimento',
-          <FontAwesome5
-            name="gas-pump"
-            size={16}
-            color={tipo === 'rifornimento' ? '#fff' : '#333'}
-            style={styles.icon}
-          />
+          <FontAwesome5 name="gas-pump" size={16} color={tipo === 'rifornimento' ? '#fff' : theme.colors.text} style={styles.icon} />
         )}
         {renderButton(
           'Manutenzione',
           'manutenzione',
-          <MaterialIcons
-            name="build"
-            size={18}
-            color={tipo === 'manutenzione' ? '#fff' : '#333'}
-            style={styles.icon}
-          />
+          <MaterialIcons name="build" size={18} color={tipo === 'manutenzione' ? '#fff' : theme.colors.text} style={styles.icon} />
         )}
         {renderButton(
           'Spesa Periodica',
           'periodica',
-          <Entypo
-            name="calendar"
-            size={18}
-            color={tipo === 'periodica' ? '#fff' : '#333'}
-            style={styles.icon}
-          />
+          <Entypo name="calendar" size={18} color={tipo === 'periodica' ? '#fff' : theme.colors.text} style={styles.icon} />
         )}
       </View>
 
-      <View style={styles.card}>
+      <View style={[styles.card, { backgroundColor: theme.colors.card }]}>
+        {(tipo === 'rifornimento' || tipo === 'manutenzione') && (
+          <>
+            <Text style={[styles.label, { color: theme.colors.text }]}>Data</Text>
+            <TouchableOpacity
+              style={[styles.dateButton, { backgroundColor: theme.colors.card, borderColor: theme.colors.border, borderWidth: 1 }]}
+              onPress={() => setShowDataEventoPicker(true)}
+            >
+              <Text style={{ color: theme.colors.text }}>
+                {dataEvento ? dataEvento.toLocaleDateString() : 'Seleziona una data'}
+              </Text>
+            </TouchableOpacity>
+            {showDataEventoPicker && (
+              <DateTimePicker
+                value={dataEvento || new Date()}
+                mode="date"
+                display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+                themeVariant={isDark ? 'dark' : 'light'}
+                onChange={(event: DateTimePickerEvent, selectedDate?: Date) => {
+                  setShowDataEventoPicker(false);
+                  if (selectedDate) setDataEvento(selectedDate);
+                }}
+              />
+            )}
+          </>
+        )}
+
         {tipo === 'rifornimento' && (
           <>
-            <Text style={styles.label}>Km attuali</Text>
-            <TextInput
-              style={styles.input}
-              keyboardType="numeric"
-              value={km}
-              onChangeText={setKm}
-              placeholder="Es. 120000"
-            />
+            <Text style={[styles.label, { color: theme.colors.text }]}>Km attuali</Text>
+            <TextInput style={[styles.input, { color: theme.colors.text, borderColor: theme.colors.border }]} keyboardType="numeric" value={km} onChangeText={setKm} placeholder="Es. 120000" placeholderTextColor={theme.colors.placeholder} />
 
-            <Text style={styles.label}>Costo (€)</Text>
-            <TextInput
-              style={styles.input}
-              keyboardType="decimal-pad"
-              value={costo}
-              onChangeText={setCosto}
-              placeholder="Es. 50"
-            />
+            <Text style={[styles.label, { color: theme.colors.text }]}>Costo (€)</Text>
+            <TextInput style={[styles.input, { color: theme.colors.text, borderColor: theme.colors.border }]} keyboardType="decimal-pad" value={costo} onChangeText={setCosto} placeholder="Es. 50" placeholderTextColor={theme.colors.placeholder} />
 
-            <Text style={styles.label}>Costo al litro (€)</Text>
-            <TextInput
-              style={styles.input}
-              keyboardType="decimal-pad"
-              value={costoLitro}
-              onChangeText={setCostoLitro}
-              placeholder="Es. 1.85"
-            />
+            <Text style={[styles.label, { color: theme.colors.text }]}>Costo al litro (€)</Text>
+            <TextInput style={[styles.input, { color: theme.colors.text, borderColor: theme.colors.border }]} keyboardType="decimal-pad" value={costoLitro} onChangeText={setCostoLitro} placeholder="Es. 1.85" placeholderTextColor={theme.colors.placeholder} />
 
-            <Text style={styles.label}>Note</Text>
-            <TextInput
-              style={styles.input}
-              value={note}
-              onChangeText={setNote}
-              placeholder="Es. Distributore IP..."
-            />
+            <Text style={[styles.label, { color: theme.colors.text }]}>Note</Text>
+            <TextInput style={[styles.input, { color: theme.colors.text, borderColor: theme.colors.border }]} value={note} onChangeText={setNote} placeholder="Es. Distributore IP..." placeholderTextColor={theme.colors.placeholder} />
           </>
         )}
 
         {tipo === 'manutenzione' && (
           <>
-            {/* Nuovo campo per il tipo di manutenzione */}
-            <Text style={styles.label}>Tipo di manutenzione</Text>
-            <TextInput
-              style={styles.input}
-              value={tipoManutenzione}
-              onChangeText={setTipoManutenzione}
-              placeholder="Es. Cambio olio, controllo freni..."
-            />
+            <Text style={[styles.label, { color: theme.colors.text }]}>Tipo di manutenzione</Text>
+            <TextInput style={[styles.input, { color: theme.colors.text, borderColor: theme.colors.border }]} value={tipoManutenzione} onChangeText={setTipoManutenzione} placeholder="Es. Cambio olio, controllo freni..." placeholderTextColor={theme.colors.placeholder} />
 
-            <Text style={styles.label}>Km attuali</Text>
-            <TextInput
-              style={styles.input}
-              keyboardType="numeric"
-              value={km}
-              onChangeText={setKm}
-              placeholder="Es. 120000"
-            />
+            <Text style={[styles.label, { color: theme.colors.text }]}>Km attuali</Text>
+            <TextInput style={[styles.input, { color: theme.colors.text, borderColor: theme.colors.border }]} keyboardType="numeric" value={km} onChangeText={setKm} placeholder="Es. 120000" placeholderTextColor={theme.colors.placeholder} />
 
-            <Text style={styles.label}>Costo (€)</Text>
-            <TextInput
-              style={styles.input}
-              keyboardType="decimal-pad"
-              value={costo}
-              onChangeText={setCosto}
-              placeholder="Es. 200"
-            />
+            <Text style={[styles.label, { color: theme.colors.text }]}>Costo (€)</Text>
+            <TextInput style={[styles.input, { color: theme.colors.text, borderColor: theme.colors.border }]} keyboardType="decimal-pad" value={costo} onChangeText={setCosto} placeholder="Es. 200" placeholderTextColor={theme.colors.placeholder} />
 
-            <Text style={styles.label}>Note</Text>
-            <TextInput
-              style={styles.input}
-              value={note}
-              onChangeText={setNote}
-              placeholder="Es. Cambio olio..."
-            />
+            <Text style={[styles.label, { color: theme.colors.text }]}>Note</Text>
+            <TextInput style={[styles.input, { color: theme.colors.text, borderColor: theme.colors.border }]} value={note} onChangeText={setNote} placeholder="Es. Cambio olio..." placeholderTextColor={theme.colors.placeholder} />
           </>
         )}
 
         {tipo === 'periodica' && (
           <>
-            <Text style={styles.label}>Costo (€)</Text>
-            <TextInput
-              style={styles.input}
-              keyboardType="decimal-pad"
-              value={costo}
-              onChangeText={setCosto}
-              placeholder="Es. 150"
-            />
+            <Text style={[styles.label, { color: theme.colors.text }]}>Costo (€)</Text>
+            <TextInput style={[styles.input, { color: theme.colors.text, borderColor: theme.colors.border }]} keyboardType="decimal-pad" value={costo} onChangeText={setCosto} placeholder="Es. 150" placeholderTextColor={theme.colors.placeholder} />
 
-            <Text style={styles.label}>Tipo di spesa</Text>
-            <TextInput
-              style={styles.input}
-              value={tipoSpesa}
-              onChangeText={setTipoSpesa}
-              placeholder="Es. Assicurazione"
-            />
+            <Text style={[styles.label, { color: theme.colors.text }]}>Tipo di spesa</Text>
+            <TextInput style={[styles.input, { color: theme.colors.text, borderColor: theme.colors.border }]} value={tipoSpesa} onChangeText={setTipoSpesa} placeholder="Es. Assicurazione" placeholderTextColor={theme.colors.placeholder} />
 
-            <Text style={styles.label}>Scadenza</Text>
-            <TouchableOpacity style={styles.dateButton} onPress={() => setShowDatePicker(true)}>
-              <Text style={styles.dateButtonText}>
+            <Text style={[styles.label, { color: theme.colors.text }]}>Scadenza</Text>
+            <TouchableOpacity
+              style={[styles.dateButton, { backgroundColor: theme.colors.card, borderColor: theme.colors.border, borderWidth: 1 }]}
+              onPress={() => setShowDatePicker(true)}
+            >
+              <Text style={{ color: theme.colors.text }}>
                 {scadenza ? scadenza.toLocaleDateString() : 'Scegli una data'}
               </Text>
             </TouchableOpacity>
@@ -227,6 +193,7 @@ export default function AggiungiScreen() {
                 value={scadenza || new Date()}
                 mode="date"
                 display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+                themeVariant={isDark ? 'dark' : 'light'}
                 onChange={(event: DateTimePickerEvent, selectedDate?: Date) => {
                   setShowDatePicker(false);
                   if (selectedDate) setScadenza(selectedDate);
@@ -234,13 +201,9 @@ export default function AggiungiScreen() {
               />
             )}
 
-            <Text style={styles.label}>Periodicità</Text>
-            <View style={styles.pickerContainer}>
-              <Picker
-                selectedValue={frequenza}
-                onValueChange={(itemValue) => setFrequenza(itemValue)}
-                style={styles.picker}
-              >
+            <Text style={[styles.label, { color: theme.colors.text }]}>Periodicità</Text>
+            <View style={[styles.pickerContainer, { borderColor: theme.colors.border }]}>
+              <Picker selectedValue={frequenza} onValueChange={(itemValue) => setFrequenza(itemValue)} style={{ color: theme.colors.text }}>
                 <Picker.Item label="Seleziona" value="" />
                 <Picker.Item label="Mensile" value="mensile" />
                 <Picker.Item label="Bimestrale" value="bimestrale" />
@@ -251,17 +214,12 @@ export default function AggiungiScreen() {
               </Picker>
             </View>
 
-            <Text style={styles.label}>Note</Text>
-            <TextInput
-              style={styles.input}
-              value={note}
-              onChangeText={setNote}
-              placeholder="Es. Rinnovo assicurazione..."
-            />
+            <Text style={[styles.label, { color: theme.colors.text }]}>Note</Text>
+            <TextInput style={[styles.input, { color: theme.colors.text, borderColor: theme.colors.border }]} value={note} onChangeText={setNote} placeholder="Es. Rinnovo assicurazione..." placeholderTextColor={theme.colors.placeholder} />
           </>
         )}
 
-        <TouchableOpacity style={styles.photoButton} onPress={scattaFoto}>
+        <TouchableOpacity style={[styles.photoButton]} onPress={scattaFoto}>
           <Text style={styles.photoText}>Scatta una foto</Text>
         </TouchableOpacity>
         {image && <Image source={{ uri: image }} style={styles.image} />}
@@ -275,50 +233,19 @@ export default function AggiungiScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f4f6f9',
-    padding: 20,
-  },
-  scrollContent: {
-    paddingBottom: 50, // Spazio extra per evitare che il contenuto si sovrapponga al Bottom Navigator
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 15,
-    color: '#333',
-  },
-  buttonGroup: {
-    marginBottom: 15,
-  },
+  container: { flex: 1, padding: 20 },
+  scrollContent: { paddingBottom: 50 },
+  buttonGroup: { marginBottom: 15 },
   optionButton: {
-    backgroundColor: '#e0e0e0',
     paddingVertical: 12,
     paddingHorizontal: 12,
     borderRadius: 10,
     marginBottom: 10,
   },
-  selectedButton: {
-    backgroundColor: '#2196F3',
-  },
-  optionText: {
-    color: '#333',
-    fontWeight: '600',
-    fontSize: 16,
-  },
-  selectedText: {
-    color: '#fff',
-  },
-  iconRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  icon: {
-    marginRight: 10, // Aumentato lo spazio tra icona e testo
-  },
+  optionText: { fontWeight: '600', fontSize: 16 },
+  iconRow: { flexDirection: 'row', alignItems: 'center' },
+  icon: { marginRight: 10 },
   card: {
-    backgroundColor: '#fff',
     borderRadius: 12,
     padding: 16,
     shadowColor: '#000',
@@ -330,34 +257,22 @@ const styles = StyleSheet.create({
   label: {
     marginTop: 12,
     fontWeight: '600',
-    color: '#555',
   },
   input: {
-    backgroundColor: '#fff',
     borderWidth: 1,
-    borderColor: '#ddd',
     padding: 10,
     borderRadius: 8,
     marginTop: 5,
   },
   dateButton: {
     marginTop: 5,
-    backgroundColor: '#eee',
     padding: 10,
     borderRadius: 6,
   },
-  dateButtonText: {
-    color: '#555',
-  },
   pickerContainer: {
-    backgroundColor: '#fff',
     borderRadius: 6,
     borderWidth: 1,
-    borderColor: '#ccc',
     marginTop: 5,
-  },
-  picker: {
-    height: 50,
   },
   photoButton: {
     backgroundColor: '#ff9800',
@@ -389,5 +304,3 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 });
-
-export {};

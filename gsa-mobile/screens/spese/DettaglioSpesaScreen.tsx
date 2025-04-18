@@ -3,17 +3,18 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image, Alert } fr
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../../types/navigation';
+import { useThemeContext } from '../../context/ThemeContext'; // Importa il context
 
 type DettaglioSpesaScreenNavigationProp = StackNavigationProp<RootStackParamList, 'DettaglioSpesa'>;
 
 export default function DettaglioSpesaScreen({ route }: any) {
+  const { theme } = useThemeContext(); // Usa il tema
   const { spesa } = route.params;
   const navigation = useNavigation<DettaglioSpesaScreenNavigationProp>();
 
   const handleEdit = () => {
     navigation.navigate('ModificaSpesa', { spesa });
   };
-  
 
   const handleDelete = () => {
     Alert.alert(
@@ -25,7 +26,6 @@ export default function DettaglioSpesaScreen({ route }: any) {
           text: 'Elimina',
           style: 'destructive',
           onPress: () => {
-            // Qui puoi aggiungere il codice per eliminare la spesa
             console.log('Spesa eliminata');
           },
         },
@@ -50,48 +50,61 @@ export default function DettaglioSpesaScreen({ route }: any) {
     return null;
   };
 
-
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <View style={styles.card}>
-        <Text style={styles.title}>Dettagli della Spesa</Text>
+    <ScrollView contentContainerStyle={[styles.container, { backgroundColor: theme.colors.background }]}>
+      <View style={[styles.card, { backgroundColor: theme.colors.card }]}>
+        <Text style={[styles.title, { color: theme.colors.text }]}>Dettagli della Spesa</Text>
 
-        <Text style={styles.label}>Categoria: <Text style={styles.value}>{spesa.categoria}</Text></Text>
-        <Text style={styles.label}>Data: <Text style={styles.value}>{spesa.dataSpesa}</Text></Text>
-        <Text style={styles.label}>Costo: <Text style={styles.value}>€{spesa.costo}</Text></Text>
+        <Text style={[styles.label, { color: theme.colors.text }]}>
+          Categoria: <Text style={styles.value}>{spesa.categoria}</Text>
+        </Text>
+        <Text style={[styles.label, { color: theme.colors.text }]}>
+          Data: <Text style={styles.value}>{spesa.dataSpesa}</Text>
+        </Text>
+        <Text style={[styles.label, { color: theme.colors.text }]}>
+          Costo: <Text style={styles.value}>€{spesa.costo}</Text>
+        </Text>
 
         {spesa.kmAttuali !== undefined && (
-          <Text style={styles.label}>Km attuali: <Text style={styles.value}>{spesa.kmAttuali} km</Text></Text>
+          <Text style={[styles.label, { color: theme.colors.text }]}>
+            Km attuali: <Text style={styles.value}>{spesa.kmAttuali} km</Text>
+          </Text>
         )}
 
         {spesa.costoAlLitro !== undefined && (
-          <Text style={styles.label}>Costo al litro: <Text style={styles.value}>€{spesa.costoAlLitro}</Text></Text>
+          <Text style={[styles.label, { color: theme.colors.text }]}>
+            Costo al litro: <Text style={styles.value}>€{spesa.costoAlLitro}</Text>
+          </Text>
         )}
 
         {spesa.categoria === 'Rifornimento' && calcolaLitri() && (
-          <Text style={styles.label}>
+          <Text style={[styles.label, { color: theme.colors.text }]}>
             Litri acquistati: <Text style={styles.value}>{calcolaLitri()}</Text>
           </Text>
         )}
 
         {calcolaConsumoMedio() && (
-          <Text style={styles.label}>Consumo medio: <Text style={styles.value}>{calcolaConsumoMedio()}</Text></Text>
+          <Text style={[styles.label, { color: theme.colors.text }]}>
+            Consumo medio: <Text style={styles.value}>{calcolaConsumoMedio()}</Text>
+          </Text>
         )}
 
         {spesa.note && (
-          <Text style={styles.label}>Note: <Text style={styles.value}>{spesa.note}</Text></Text>
+          <Text style={[styles.label, { color: theme.colors.text }]}>
+            Note: <Text style={styles.value}>{spesa.note}</Text>
+          </Text>
         )}
 
         {spesa.foto && (
           <View style={styles.imageContainer}>
-            <Text style={styles.label}>Foto:</Text>
+            <Text style={[styles.label, { color: theme.colors.text }]}>Foto:</Text>
             <Image source={{ uri: spesa.foto }} style={styles.image} />
           </View>
         )}
       </View>
 
       <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.editButton} onPress={handleEdit}>
+        <TouchableOpacity style={[styles.editButton, { backgroundColor: theme.colors.primary }]} onPress={handleEdit}>
           <Text style={styles.buttonText}>Modifica</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.deleteButton} onPress={handleDelete}>
@@ -105,11 +118,9 @@ export default function DettaglioSpesaScreen({ route }: any) {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    backgroundColor: '#f9f9f9',
     padding: 20,
   },
   card: {
-    backgroundColor: '#fff',
     borderRadius: 12,
     padding: 20,
     elevation: 5,
@@ -122,17 +133,14 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#333',
     marginBottom: 20,
   },
   label: {
     fontSize: 18,
-    color: '#666',
     marginBottom: 10,
   },
   value: {
     fontWeight: '600',
-    color: '#333',
   },
   imageContainer: {
     marginTop: 20,
@@ -150,7 +158,6 @@ const styles = StyleSheet.create({
     marginTop: 30,
   },
   editButton: {
-    backgroundColor: '#007bff',
     paddingVertical: 12,
     paddingHorizontal: 30,
     borderRadius: 25,

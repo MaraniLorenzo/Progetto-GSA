@@ -3,14 +3,15 @@ import { FlatList, Text, TouchableOpacity, View, StyleSheet, TextInput } from 'r
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList, Scadenza } from '../../types/navigation';
+import { useThemeContext } from '../../context/ThemeContext';
 
 type NavigationProp = StackNavigationProp<RootStackParamList, 'ScadenzaDettaglio'>;
 
 const ScadenzeScreen = () => {
   const navigation = useNavigation<NavigationProp>();
   const [query, setQuery] = useState('');
+  const { theme } = useThemeContext();  // Ottieni il tema corrente
 
-  // Supponiamo che le scadenze siano un array di oggetti
   const scadenze: Scadenza[] = [
     {
       id: '1',
@@ -33,8 +34,8 @@ const ScadenzeScreen = () => {
     const lowerQuery = query.toLowerCase();
     return (
       scadenza.periodicita.toLowerCase().includes(lowerQuery) ||
-      (scadenza.tipo?.toLowerCase() || 'N/D').includes(lowerQuery) || // placeholder per 'tipo'
-      (scadenza.note?.toLowerCase() || 'Nessuna nota').includes(lowerQuery) || // placeholder per 'note'
+      (scadenza.tipo?.toLowerCase() || 'N/D').includes(lowerQuery) || 
+      (scadenza.note?.toLowerCase() || 'Nessuna nota').includes(lowerQuery) ||
       scadenza.dataScadenza.includes(query)
     );
   });
@@ -43,13 +44,15 @@ const ScadenzeScreen = () => {
     navigation.navigate('ScadenzaDettaglio', { scadenza });
   };
 
+  const isDark = theme.dark;  // Verifica se il tema è scuro
+
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: isDark ? '#121212' : '#f9f9f9' }]}>
       {/* Barra di ricerca */}
       <TextInput
-        style={styles.searchInput}
+        style={[styles.searchInput, { backgroundColor: isDark ? '#2b2b2b' : '#fff', borderColor: isDark ? '#555' : '#007bff' }]}
         placeholder="Cerca scadenza..."
-        placeholderTextColor="#aaa"
+        placeholderTextColor={isDark ? '#aaa' : '#aaa'}
         value={query}
         onChangeText={setQuery}
       />
@@ -59,12 +62,12 @@ const ScadenzeScreen = () => {
         data={filteredScadenze}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <TouchableOpacity style={styles.item} onPress={() => handlePress(item)}>
+          <TouchableOpacity style={[styles.item, { backgroundColor: isDark ? '#1e1e1e' : '#fff' }]} onPress={() => handlePress(item)}>
             <View style={styles.itemContent}>
-              <Text style={styles.title}>{item.periodicita}</Text>
-              <Text style={styles.date}>{item.dataScadenza}</Text>
+              <Text style={[styles.title, { color: isDark ? '#fff' : '#333' }]}>{item.periodicita}</Text>
+              <Text style={[styles.date, { color: isDark ? '#bbb' : '#777' }]}>{item.dataScadenza}</Text>
               <View style={styles.divider} />
-              <Text style={styles.tipo}>{item.tipo || 'N/D'}</Text>
+              <Text style={[styles.tipo, { color: isDark ? '#1e90ff' : '#007bff' }]}>{item.tipo || 'N/D'}</Text>
             </View>
           </TouchableOpacity>
         )}
@@ -74,63 +77,55 @@ const ScadenzeScreen = () => {
 };
 
 const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      padding: 16,
-      backgroundColor: '#f9f9f9',
-    },
-    searchInput: {
-      height: 50,
-      borderColor: '#007bff',
-      borderWidth: 1.5,
-      borderRadius: 25,
-      paddingHorizontal: 20,
-      fontSize: 16,
-      backgroundColor: '#fff',
-      marginBottom: 20,
-      shadowColor: '#000',
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.2,
-      shadowRadius: 6,
-    },
-    item: {
-      backgroundColor: '#fff',
-      borderRadius: 12,
-      padding: 18,
-      marginBottom: 16,
-      elevation: 3,
-      shadowColor: '#000',
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.2,
-      shadowRadius: 8,
-    },
-    itemContent: {
-      flexDirection: 'column',
-      justifyContent: 'center',
-      alignItems: 'flex-start',
-    },
-    title: {
-      fontSize: 18,
-      fontWeight: 'bold',
-      color: '#333',
-    },
-    date: {
-      fontSize: 14,
-      color: '#777',
-      marginVertical: 4,
-    },
-    tipo: {
-      fontSize: 14,
-      fontStyle: 'italic',
-      color: '#007bff',
-    },
-    divider: {
-      height: 1,
-      backgroundColor: '#ddd',
-      marginVertical: 8,
-      width: '100%',
-    },
-  });
-  
+  container: {
+    flex: 1,
+    padding: 16,
+  },
+  searchInput: {
+    height: 50,
+    borderWidth: 1.5,
+    borderRadius: 25,
+    paddingHorizontal: 20,
+    fontSize: 16,
+    marginBottom: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+  },
+  item: {
+    borderRadius: 12,
+    padding: 18,
+    marginBottom: 16,
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+  },
+  itemContent: {
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'flex-start',
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  date: {
+    fontSize: 14,
+    marginVertical: 4,
+  },
+  tipo: {
+    fontSize: 14,
+    fontStyle: 'italic',
+  },
+  divider: {
+    height: 1,
+    backgroundColor: '#ddd',
+    marginVertical: 8,
+    width: '100%',
+  },
+});
 
 export default ScadenzeScreen;

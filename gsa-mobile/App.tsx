@@ -1,11 +1,15 @@
 import React from 'react';
+import { ThemeProvider } from './context/ThemeContext';
 import AppNavigator from './navigation/AppNavigator';
-import LoginScreen from './screens/LoginScreen';
-import RegisterScreen from './screens/RegisterScreen';
-import HomeScreen from './screens/HomeScreen';
+import { AppStatusBar } from './components/AppStatusBar';
 
-function App() {
-  return <AppNavigator />;
-}
+const App = () => {
+  return (
+    <ThemeProvider>
+      <AppStatusBar />
+      <AppNavigator />
+    </ThemeProvider>
+  );
+};
 
 export default App;

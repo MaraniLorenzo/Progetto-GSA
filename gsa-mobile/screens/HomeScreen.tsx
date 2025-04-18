@@ -3,20 +3,27 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../types/navigation';
+import { useThemeContext } from '../context/ThemeContext';
 
 export default function HomeScreen() {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const { theme } = useThemeContext();
 
   const handleLogout = () => {
     navigation.navigate('Login');
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Benvenuto nella Home!</Text>
-      <Text style={styles.subtitle}>Questa è la schermata principale della tua app.</Text>
+    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+      <Text style={[styles.title, { color: theme.colors.text }]}>Benvenuto nella Home!</Text>
+      <Text style={[styles.subtitle, { color: theme.colors.text }]}>
+        Questa è la schermata principale della tua app.
+      </Text>
 
-      <TouchableOpacity style={[styles.button, styles.logoutButton]} onPress={handleLogout}>
+      <TouchableOpacity
+        style={[styles.button, { backgroundColor: theme.colors.primary }]}
+        onPress={handleLogout}
+      >
         <Text style={styles.buttonText}>Logout</Text>
       </TouchableOpacity>
     </View>
@@ -28,7 +35,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#f5f5f5',
     padding: 24,
   },
   title: {
@@ -38,11 +44,9 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 18,
-    color: '#333',
     marginBottom: 40,
   },
   button: {
-    backgroundColor: '#007bff',
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 5,
@@ -52,8 +56,5 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 18,
     textAlign: 'center',
-  },
-  logoutButton: {
-    backgroundColor: '#dc3545',
   },
 });
