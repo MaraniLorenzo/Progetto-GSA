@@ -83,8 +83,7 @@ function BottomTabs() {
 
   // Colore per il tema chiaro o scuro
   const activeTintColor = '#007bff'; // Blu per l'icona attiva
-  const inactiveTintColor = isDark ? '#ffffff' : '#d1d1d1'; // Colore più chiaro per tema chiaro
-
+  const inactiveTintColor = isDark ? '#ffffff' : '#000000'; 
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -106,7 +105,7 @@ function BottomTabs() {
           }
           return <Ionicons name={iconName} size={size} color={color} />;
         },
-        tabBarActiveTintColor: activeTintColor,  // Usando il blu #007bff
+        tabBarActiveTintColor: activeTintColor, 
         tabBarInactiveTintColor: inactiveTintColor,
         tabBarStyle: { backgroundColor: colors.card },
         headerShown: false,
